@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header id="app-header">
+        Try System&nbsp;&raquo;&nbsp;ユーザー登録
+        <nav style="float:right">
+            <a href="/" class="nav-link">カレンダーに戻る</a>
+        </nav>
+    </header>
+
+    <main style="padding:16px">
+        <h3>新規ユーザー入力</h3>
+        <div class="row align-center">
+            <input id="new-name" placeholder="氏名" class="flex" style="font-size:16px">
+            <input id="new-mail" placeholder="メールアドレス" class="flex" style="font-size:16px">
+            <button id="btn-add" class="action">登録</button>
+        </div>
+
+        <h3 style="margin-top:24px">登録済みユーザー</h3>
+        <table id="contacts-table" border="1" cellpadding="4" style="width:100%;border-collapse:collapse">
+            <thead>
+                <tr>
+                    <th style="width:40%">氏名</th>
+                    <th>メール</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </main>
+
+    <script src="main_register.js"></script>
+</body>
+
+</html>

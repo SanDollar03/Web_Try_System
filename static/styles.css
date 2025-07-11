@@ -1,0 +1,267 @@
+/* 共通フォント */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+/* ── ヘッダー ───────────────────────── */
+#app-header {
+    background: #1976d2;
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.nav-link {
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    margin-left: 16px;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+/* ── レイアウト ─────────────────────── */
+#wrapper {
+    display: flex;
+    height: calc(100vh - 52px);
+}
+
+#calendar {
+    flex: 0 0 70%;
+    border-right: 1px solid #e0e0e0;
+}
+
+#sidebar {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    background: #fafafa;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* モード表示 */
+#form-mode {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.mode-new {
+    color: #1976d2;
+}
+
+.mode-edit {
+    color: #d32f2f;
+}
+
+/* 行・列ユーティリティ */
+.row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.flex {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.col span,
+.flex span {
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+/* ラジオ */
+.radios {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.radios label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 4px;
+}
+
+/* 承認者行 */
+.approver-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.approver-row input {
+    flex: 1;
+}
+
+/* ボタン */
+button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+    font-family: inherit;
+}
+
+.action,
+.approver-btn {
+    background: #e0e0e0;
+    color: #000;
+}
+
+.action:hover:not(.loading),
+.approver-btn:hover:not(.disabled) {
+    background: #e53935;
+    color: #fff;
+}
+
+.pressed {
+    background: #e53935 !important;
+    color: #fff !important;
+}
+
+.buttons {
+    gap: 12px;
+}
+
+button.loading {
+    pointer-events: none;
+    opacity: .5;
+}
+
+/* FullCalendar ───────────────────────── */
+/* ツールバー */
+.fc .fc-button-primary {
+    background: #e0e0e0;
+    border: none;
+    color: #000;
+    transition: .2s;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+.fc .fc-button-primary:hover:not(:disabled) {
+    background: #e53935;
+    color: #fff;
+}
+
+.fc .fc-button-primary:disabled {
+    opacity: .3;
+    cursor: default;
+}
+
+/* セル・日付数字 */
+.fc .fc-daygrid-day-frame {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+    color: #000 !important;
+    font-weight: 400;
+    margin-bottom: 2px;
+}
+
+.fc .fc-daygrid-day-events {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+/* イベントフォント */
+.fc .fc-event,
+.fc .fc-event *,
+.fc .fc-event-main,
+.fc .fc-event-main * {
+    color: #000 !important;
+    font-size: 9px;
+    line-height: 1.1;
+    font-weight: 400;
+}
+
+.fc .fc-event {
+    padding: 1px 2px;
+}
+
+/* 単日予定 */
+.fc-event.single {
+    background: transparent;
+    border: none;
+}
+
+/* マルチデイ予定 */
+.fc-event.multiday-first,
+.fc-event.multiday-mid,
+.fc-event.multiday-last {
+    background: #b3e5fc;
+}
+
+/* ★ クリックで選択されたイベント強調 */
+.fc-event.selected-event {
+    background: #ffcc80 !important;
+    box-shadow: 0 0 0 2px #fb8c00 inset;
+}
+
+/* 選択セル強調 */
+.fc-daygrid-day.selected-day,
+.fc-daygrid-day.selected-day .fc-daygrid-day-frame {
+    background: #fff8e1;
+    border: 2px solid #ffb74d;
+}
+
+/* Loading Overlay */
+#loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .6);
+    font-size: 24px;
+    color: #333;
+    z-index: 999;
+    visibility: hidden;
+}
+
+/* レスポンシブ */
+@media(max-width:900px) {
+    #wrapper {
+        flex-direction: column;
+    }
+
+    #calendar {
+        flex: none;
+        height: 60vh;
+    }
+}
