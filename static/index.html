@@ -3,77 +3,108 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>スケジューラー</title>
+    <title>Try System | カレンダー</title>
 
     <!-- FullCalendar -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 
-    <!-- カスタムスタイル -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <!-- ── ヘッダー ───────────────────────── -->
     <header id="app-header">
-        Try System
-        <nav style="float:right">
-            <a href="/register" class="nav-link">ユーザー登録</a>
-        </nav>
+        <span id="greeting">ようこそ！</span>
+        <button id="btn-logout" type="button" class="action" style="float:right">ログアウト</button>
     </header>
 
     <!-- ── 本体 ───────────────────────────── -->
     <div id="wrapper">
+        <!-- カレンダー -->
         <div id="calendar"></div>
 
+        <!-- 右サイドバー : 登録フォーム -->
         <aside id="sidebar">
             <h3 id="form-mode" class="mode-new">新規登録</h3>
 
             <form id="event-form">
-                <!-- カテゴリー + ライン名 -->
-                <div class="row align-center">
-                    <div class="radios">
-                        <label><input type="radio" name="category" value="内製" required /> 内製</label>
-                        <label><input type="radio" name="category" value="外注" /> 外注</label>
-                        <label><input type="radio" name="category" value="トライ" /> トライ</label>
-                    </div>
-                    <label class="flex"><span>ライン名</span><input name="line_name" required /></label>
+                <!-- カテゴリー -->
+                <div class="row category-row">
+                    <label><input type="radio" name="category" value="内製" required> 内製</label>
+                    <label><input type="radio" name="category" value="外注"> 外注</label>
+                    <label><input type="radio" name="category" value="トライ"> トライ</label>
                 </div>
 
-                <label class="col"><span>件名</span><input name="title" required /></label>
-
-                <div class="row">
-                    <label class="flex"><span>部署コード</span><input name="dept_code" pattern="[A-Za-z0-9]+"
-                            required /></label>
-                    <label class="flex"><span>工事担当者</span><input name="worker" list="contactsList" required /></label>
-                    <label class="flex"><span>先行依頼数</span><input type="number" name="advance_qty" min="0" value="0"
-                            required /></label>
+                <!-- ライン名 / 件名 -->
+                <div class="row nowrap">
+                    <label class="line-25"><span>ライン名</span><input name="line_name" required></label>
+                    <label class="line-75"><span>件名</span><input name="title" required></label>
                 </div>
 
-                <div class="row">
-                    <label class="flex"><span>開始日時</span><input type="datetime-local" name="start_dt"
-                            required /></label>
-                    <label class="flex"><span>終了日時</span><input type="datetime-local" name="end_dt" required /></label>
+                <!-- 目的 / 緊急度 -->
+                <div class="row nowrap">
+                    <label class="flex-75"><span>目的</span><input name="purpose"></label>
+                    <label class="flex-25"><span>緊急度</span>
+                        <select name="urgency" id="urgencySelect" required></select>
+                    </label>
                 </div>
 
+                <!-- 部署コード / 工事担当者 -->
+                <div class="row nowrap">
+                    <label class="flex-50"><span>部署コード</span>
+                        <input name="dept_code" pattern="[A-Za-z0-9]+" required>
+                    </label>
+                    <label class="flex-50"><span>工事担当者</span>
+                        <!-- readonly でログインユーザーを固定 -->
+                        <input name="worker" id="workerInput" list="contactsList" required readonly>
+                    </label>
+                </div>
+
+                <!-- 先行依頼数 / 単位 -->
+                <div class="row nowrap">
+                    <label class="flex-50"><span>先行依頼数</span>
+                        <input type="number" name="advance_qty" min="0" value="0" required>
+                    </label>
+                    <label class="flex-50"><span>単位</span>
+                        <select name="unit" id="unitSelect" required></select>
+                    </label>
+                </div>
+
+                <!-- 開始 / 終了 -->
+                <div class="row nowrap">
+                    <label class="flex-50"><span>開始日時</span>
+                        <input type="datetime-local" name="start_dt" required>
+                    </label>
+                    <label class="flex-50"><span>終了日時</span>
+                        <input type="datetime-local" name="end_dt" required>
+                    </label>
+                </div>
+
+                <!-- 備考 -->
                 <label class="col"><span>備考</span><textarea name="memo" rows="3"></textarea></label>
 
-                <!-- 承認者行を main.js で自動生成 -->
+                <!-- 承認者行 (main.js が自動生成) -->
                 <fieldset id="approvers">
                     <legend>承認者 (最大 6 名)</legend>
                 </fieldset>
 
+                <!-- ボタン -->
                 <div class="row buttons">
                     <button type="submit" class="action">登録</button>
-                    <button type="button" id="btn-cancel" class="action">キャンセル</button>
+                    <button type="button" id="btn-cancel" class="action">イベントのキャンセル</button>
                 </div>
             </form>
 
+            <!-- 連絡先 (工事担当者候補) -->
             <datalist id="contactsList"></datalist>
         </aside>
     </div>
 
+    <!-- 認証 / ログアウト / greeting -->
+    <script src="auth.js"></script>
     <script src="main.js"></script>
+    <script src="logger.js"></script>
 </body>
 
 </html>
