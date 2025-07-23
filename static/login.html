@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Try System | ログイン / 新規登録</title>
+
+    <!-- 共通スタイル（フォント等） -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
+
+</head>
+
+<body>
+    <div class="card">
+        <!-- タブ -->
+        <div class="tab-head">
+            <div id="tab-login" class="tab-btn active">ログイン</div>
+            <div id="tab-reg" class="tab-btn">新規登録</div>
+        </div>
+
+        <!-- ログインフォーム -->
+        <form id="login-form">
+            <input id="login-email" type="email" autocomplete="email" placeholder="メールアドレス" required>
+            <button type="submit">ログイン</button>
+        </form>
+
+        <!-- 新規登録フォーム -->
+        <form id="reg-form" class="hidden">
+            <input id="reg-last" placeholder="姓" autocomplete="family-name" required>
+            <input id="reg-first" placeholder="名" autocomplete="given-name" required>
+            <input id="reg-email" type="email" placeholder="メールアドレス" autocomplete="email" required>
+            <input id="reg-dept" placeholder="部署コード (5桁英数字)" maxlength="5" pattern="[A-Za-z0-9]{5}" title="半角英数字 5 桁"
+                required>
+            <button type="submit">登録してログイン</button>
+        </form>
+
+        <p id="msg"></p>
+    </div>
+
+    <!-- 認証スクリプト -->
+    <script src="auth.js"></script>
+    <script src="logger.js"></script>
+</body>
+
+</html>
