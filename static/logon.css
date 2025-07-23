@@ -1,0 +1,104 @@
+/* login.css – ログイン／新規登録画面専用 */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+}
+
+.card {
+    width: 360px;
+    max-width: 92%;
+    background: #fff;
+    border-radius: 10px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    animation: pop .5s cubic-bezier(.25, .8, .25, 1);
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(.8);
+        opacity: 0
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1
+    }
+}
+
+.tab-head {
+    display: flex;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 24px
+}
+
+.tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    color: #666;
+    transition: .2s
+}
+
+.tab-btn.active {
+    color: #1976d2;
+    border-bottom: 3px solid #1976d2
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+}
+
+input,
+select {
+    height: 40px;
+    padding: 0 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: .2s
+}
+
+input:focus {
+    border-color: #1976d2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, .25)
+}
+
+button {
+    height: 42px;
+    border: none;
+    border-radius: 4px;
+    background: #1976d2;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s
+}
+
+button:hover {
+    background: #135ba1
+}
+
+#msg {
+    min-height: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #d32f2f
+}
+
+.hidden {
+    display: none
+}
