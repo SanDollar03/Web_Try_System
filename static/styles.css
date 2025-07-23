@@ -1,246 +1,323 @@
-/* 共通フォント */
+/* ───────── 基本設定 ───────── */
 html,
 body {
     height: 100%;
     margin: 0;
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif
 }
 
-/* ── ヘッダー ───────────────────────── */
+:root {
+    --ctrl-height: 36px;
+    --gap: 12px
+}
+
+/* 入力共通 */
+input:not([type="radio"]):not([type="checkbox"]),
+select {
+    height: var(--ctrl-height);
+    line-height: var(--ctrl-height);
+    padding: 4px 8px;
+    box-sizing: border-box
+}
+
+textarea {
+    box-sizing: border-box;
+    min-height: calc(var(--ctrl-height)*2.5)
+}
+
+/* ───────── カレンダー ───────── */
+.fc .fc-day-sat .fc-daygrid-day-frame {
+    background: #F0F8FF
+}
+
+.fc .fc-day-sun .fc-daygrid-day-frame {
+    background: #FFF5EE
+}
+
+.fc .fc-daygrid-day-frame {
+    background: #FFFFFF
+}
+
+.fc .fc-day-today .fc-daygrid-day-frame {
+    border: 2px solid red
+}
+
+.fc-daygrid-day.selected-day:not(.fc-day-today) .fc-daygrid-day-frame {
+    background: #FFF9C4;
+    border: 3px solid #FFB300
+}
+
+.fc-daygrid-day.selected-day.fc-day-today .fc-daygrid-day-frame {
+    background: #FFE0B2;
+    border: 3px solid #FB8C00
+}
+
+/* カテゴリー別イベント色 */
+.fc-event.cat-naisei,
+.fc-event.cat-naisei .fc-event-main {
+    background: #98FB98 !important;
+    color: #000 !important
+}
+
+.fc-event.cat-gaichu,
+.fc-event.cat-gaichu .fc-event-main {
+    background: #64B5F6 !important;
+    color: #000 !important
+}
+
+.fc-event.cat-try,
+.fc-event.cat-try .fc-event-main {
+    background: #FFB74D !important;
+    color: #000 !important
+}
+
+.fc-event.selected-event {
+    background: #ffcc80 !important;
+    box-shadow: 0 0 0 2px #fb8c00 inset
+}
+
+/* FullCalendar ボタン */
+.fc .fc-button-primary {
+    background: #e0e0e0;
+    border: none;
+    color: #000;
+    font-size: 12px;
+    padding: 0 14px;
+    height: var(--ctrl-height);
+    line-height: var(--ctrl-height);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: .2s;
+    font-family: inherit
+}
+
+.fc .fc-button-primary:hover:not(:disabled) {
+    background: #e53935;
+    color: #fff
+}
+
+.fc .fc-button-primary:disabled {
+    opacity: .3
+}
+
+/* ───────── レイアウト ───────── */
 #app-header {
     background: #1976d2;
     color: #fff;
-    padding: 12px 16px;
-    font-size: 20px;
+    padding: 6px 12px;
+    font-size: 18px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 1px
 }
 
-.nav-link {
-    font-size: 14px;
-    font-weight: 400;
-    color: #fff;
-    margin-left: 16px;
-    text-decoration: none;
+#btn-logout {
+    margin-left: auto;
+    background: #e0e0e0;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 0 14px;
+    height: var(--ctrl-height);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
 }
 
-.nav-link:hover {
-    text-decoration: underline;
+#btn-logout:hover {
+    background: #e53935;
+    color: #fff
 }
 
-/* ── レイアウト ─────────────────────── */
 #wrapper {
     display: flex;
-    height: calc(100vh - 52px);
+    height: calc(100vh - 52px)
 }
 
 #calendar {
     flex: 0 0 70%;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0
 }
 
 #sidebar {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
-    background: #fafafa;
+    background: #fafafa
 }
 
+/* ───────── フォーム ───────── */
 form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 16px
 }
 
-/* モード表示 */
 #form-mode {
-    margin: 0 0 12px 0;
-    font-size: 18px;
-    font-weight: 600;
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 600
 }
 
 .mode-new {
-    color: #1976d2;
+    color: #1976d2
 }
 
 .mode-edit {
-    color: #d32f2f;
+    color: #d32f2f
 }
 
-/* 行・列ユーティリティ */
+/* 行ユーティリティ */
 .row {
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
+    gap: var(--gap)
 }
 
-.align-center {
-    align-items: center;
+.nowrap {
+    flex-wrap: nowrap
+}
+
+.col {
+    display: flex;
+    flex-direction: column
 }
 
 .flex {
     flex: 1;
     display: flex;
-    flex-direction: column;
-}
-
-.col {
-    display: flex;
-    flex-direction: column;
+    flex-direction: column
 }
 
 .col span,
 .flex span {
     margin-bottom: 4px;
-    font-size: 14px;
+    font-size: 12px
 }
 
-/* ラジオ */
-.radios {
+/* 幅プリセット */
+.line-25,
+.flex-25 {
+    flex: 0 0 25%
+}
+
+.line-75,
+.flex-75 {
+    flex: 1
+}
+
+.flex-50 {
+    flex: 0 0 calc(50% - var(--gap)/2)
+}
+
+.row label {
     display: flex;
-    gap: 12px;
+    flex-direction: column
+}
+
+/* ★ カテゴリー行 – ラジオボタンを均等横並び */
+.category-row {
+    display: flex;
+    flex-wrap: nowrap;
+    /* 3 つを必ず 1 行に */
+}
+
+/* カテゴリー行 */
+.category-row>label {
+    flex: 1 1 0;
+    /* 均等幅 */
+    display: flex;
+    /* ← 通常の flex に変更 */
+    flex-direction: row;
+    /* ★ 横並びを明示 */
     align-items: center;
+    /* 垂直中央 */
+    justify-content: center;
+    /* 左右中央 (均等幅なので横位置も揃う) */
+    gap: 8px;
+    /* ボタンと文字の間隔 */
     white-space: nowrap;
-}
-
-.radios label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    gap: 4px;
 }
 
 /* 承認者行 */
 .approver-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: 1px;
+    margin-bottom: 6px
 }
 
 .approver-row input {
-    flex: 1;
+    flex: 1
 }
 
 /* ボタン */
 button {
-    padding: 6px 14px;
+    height: var(--ctrl-height);
+    line-height: var(--ctrl-height);
+    padding: 0 14px;
     border: none;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
     transition: .2s;
-    font-family: inherit;
+    font-family: inherit
 }
 
 .action,
 .approver-btn {
     background: #e0e0e0;
-    color: #000;
+    color: #000
 }
 
 .action:hover:not(.loading),
 .approver-btn:hover:not(.disabled) {
     background: #e53935;
-    color: #fff;
+    color: #fff
 }
 
 .pressed {
     background: #e53935 !important;
-    color: #fff !important;
+    color: #fff !important
 }
 
 .buttons {
-    gap: 12px;
+    gap: 12px
 }
 
 button.loading {
     pointer-events: none;
-    opacity: .5;
+    opacity: .5
 }
 
-/* FullCalendar ───────────────────────── */
-/* ツールバー */
-.fc .fc-button-primary {
-    background: #e0e0e0;
-    border: none;
-    color: #000;
-    transition: .2s;
-    font-size: 14px;
-    padding: 6px 12px;
-}
-
-.fc .fc-button-primary:hover:not(:disabled) {
-    background: #e53935;
-    color: #fff;
-}
-
-.fc .fc-button-primary:disabled {
-    opacity: .3;
-    cursor: default;
-}
-
-/* セル・日付数字 */
-.fc .fc-daygrid-day-frame {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
+/* その他 */
 .fc .fc-daygrid-day-number,
 .fc .fc-col-header-cell-cushion {
     color: #000 !important;
     font-weight: 400;
-    margin-bottom: 2px;
+    margin-bottom: 2px
 }
 
 .fc .fc-daygrid-day-events {
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
-    min-height: 0;
-}
-
-/* イベントフォント */
-.fc .fc-event,
-.fc .fc-event *,
-.fc .fc-event-main,
-.fc .fc-event-main * {
-    color: #000 !important;
-    font-size: 9px;
-    line-height: 1.1;
-    font-weight: 400;
+    min-height: 0
 }
 
 .fc .fc-event {
     padding: 1px 2px;
+    font-size: 11px !important;
+    white-space: normal
 }
 
-/* 単日予定 */
-.fc-event.single {
-    background: transparent;
-    border: none;
-}
-
-/* マルチデイ予定 */
-.fc-event.multiday-first,
-.fc-event.multiday-mid,
-.fc-event.multiday-last {
-    background: #b3e5fc;
-}
-
-/* ★ クリックで選択されたイベント強調 */
-.fc-event.selected-event {
-    background: #ffcc80 !important;
-    box-shadow: 0 0 0 2px #fb8c00 inset;
-}
-
-/* 選択セル強調 */
-.fc-daygrid-day.selected-day,
+/* カレンダー – 選択中の日付を強調 */
 .fc-daygrid-day.selected-day .fc-daygrid-day-frame {
     background: #fff8e1;
     border: 2px solid #ffb74d;
+    box-sizing: border-box;
 }
 
-/* Loading Overlay */
 #loading-overlay {
     position: fixed;
     inset: 0;
@@ -248,20 +325,26 @@ button.loading {
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, .6);
-    font-size: 24px;
+    font-size: 12px;
     color: #333;
     z-index: 999;
-    visibility: hidden;
+    visibility: hidden
 }
 
-/* レスポンシブ */
 @media(max-width:900px) {
     #wrapper {
-        flex-direction: column;
+        flex-direction: column
     }
 
     #calendar {
         flex: none;
-        height: 60vh;
+        height: 60vh
     }
+}
+
+/* 読取専用フィールドはグレー背景で「編集不可」を視覚化 */
+input[readonly] {
+    background: #f1f1f1;
+    color: #555;
+    cursor: not-allowed;
 }
