@@ -34,31 +34,35 @@ document.addEventListener("DOMContentLoaded", async () => {
             tr.appendChild(td);
         });
 
-        // 電子トレイパス表示列
-        const tdPath = document.createElement("td");
-        tdPath.style.border = "1px solid #ccc";
-        tdPath.style.padding = "6px";
-        tdPath.textContent = u.tray_path || "";
-        tr.appendChild(tdPath);
+        // 電子トレイパス：テキスト入力欄
+        const tdInput = document.createElement("td");
+        tdInput.style.border = "1px solid #ccc";
+        tdInput.style.padding = "6px";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = u.tray_path || "";
+        input.style.width = "100%";
+        tdInput.appendChild(input);
+        tr.appendChild(tdInput);
 
-        // フォルダ選択ボタン列
-        const tdBtn = document.createElement("td");
-        tdBtn.style.border = "1px solid #ccc";
-        tdBtn.style.padding = "6px";
-        const btn = document.createElement("button");
-        btn.textContent = "選択";
-        btn.className = "action";
-        btn.onclick = async () => {
+        // 保存ボタン列
+        const tdSave = document.createElement("td");
+        tdSave.style.border = "1px solid #ccc";
+        tdSave.style.padding = "6px";
+        const btnSave = document.createElement("button");
+        btnSave.textContent = "保存";
+        btnSave.className = "action";
+        btnSave.onclick = async () => {
             try {
-                // サーバー側でダイアログを開いて tray_path を返却
-                const res = await api(`/api/users/select_tray/${u.id}`);
-                tdPath.textContent = res.tray_path;
+                const newPath = input.value.trim();
+                await api(`/api/users/${u.id}`, "PUT", { tray_path: newPath });
+                alert("電子トレイパスを保存しました");
             } catch (err) {
-                alert("フォルダ選択エラー: " + err);
+                alert("保存に失敗しました: " + err);
             }
         };
-        tdBtn.appendChild(btn);
-        tr.appendChild(tdBtn);
+        tdSave.appendChild(btnSave);
+        tr.appendChild(tdSave);
 
         tbody.appendChild(tr);
     });
