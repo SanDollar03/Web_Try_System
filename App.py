@@ -6,7 +6,16 @@ from flask import (
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import os, re, json, pandas as pd
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from utils.csv_store import read_csv, write_csv, ensure_columns
+
+import tkinter as tk
+from tkinter import filedialog
+
+from email.mime.text import MIMEText
 
 # ────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
@@ -79,10 +88,15 @@ def page_login(): return send_from_directory(app.static_folder, "login.html")
 @app.get("/calendar")
 def page_calendar():
     return redirect("/") if not current_user() else \
-           send_from_directory(app.static_folder, "index.html")
+            send_from_directory(app.static_folder, "index.html")
 
 @app.get("/<path:p>")
-def static_proxy(p): return send_from_directory(app.static_folder, p)
+def static_proxy(p):
+    # HTMLファイルへの直接アクセスはログイン必須
+    if p.endswith(".html") and p not in ("login.html",):
+        # 未ログイン時はログイン画面へ
+        return redirect("/login.html")
+    return send_from_directory(app.static_folder, p)
 
 # ── Auth ────────────────────────────────────────────────────────
 @app.post("/api/login")
@@ -165,7 +179,7 @@ def api_events():
 def api_event_create():
     d=request.get_json(force=True)
     required=("category","line_name","title","dept_code","worker",
-              "start_dt","end_dt","urgency","unit")
+                "start_dt","end_dt","urgency","unit")
     if any(not d.get(k,"") for k in required): abort(400,"missing fields")
 
     df=ensure_id(read_csv(CSV_EVENTS))
@@ -213,6 +227,126 @@ def api_event_delete(eid:int):
     write_csv(df,CSV_EVENTS)
     log_action(usr,"event_delete",f'id={eid}')
     return jsonify(status="deleted")
+
+# ── ユーザー用フォルダ選択＆CSV更新 API ───────────────────────
+@app.get("/api/users/select_tray/<int:uid>")
+def api_select_tray(uid: int):
+    # Tk を使ってフォルダ選択ダイアログを開く
+    root = tk.Tk()
+    root.withdraw()
+    folder = filedialog.askdirectory(
+        title="電子トレイフォルダを選択",
+        initialdir=r"\\172.27.21.41\disk1\ElectricTray\鋳鍛造部"
+    )
+    root.destroy()
+
+    if not folder:
+        abort(400, "フォルダが選択されませんでした")
+
+    # users.csv を読み込み、tray_path カラムを保証して更新
+    df = ensure_id(read_csv(CSV_USERS))
+    df = ensure_columns(df, ["tray_path"])
+    df.loc[df["id"].astype(int) == uid, "tray_path"] = folder
+    write_csv(df, CSV_USERS)
+
+    log_action(current_user(), "select_tray", f"uid={uid} path={folder}")
+    return jsonify(tray_path=folder)
+
+# ── 承認者の電子トレイへテキスト投函 API ────────────────────────
+@app.post("/api/events/<int:eid>/deposit_tray")
+def api_deposit_tray(eid: int):
+    # イベント取得
+    df_e = ensure_id(read_csv(CSV_EVENTS))
+    if eid not in df_e["id"].astype(int).values:
+        abort(404, "event not found")
+    ev = df_e[df_e["id"].astype(int) == eid].iloc[0]
+
+    # 承認者フルネームのリスト
+    approvers = deserialize(ev.get("approvers", "[]"))
+
+    # ユーザーCSV から各承認者の tray_path を取得し、テキストファイルを生成
+    df_u = ensure_id(read_csv(CSV_USERS))
+    for full in approvers:
+        # フルネームでマッチ
+        mask = (df_u["last_name"].fillna("") + df_u["first_name"].fillna("")) == full
+        row_u = df_u[mask]
+        if row_u.empty: continue
+        tray = row_u.iloc[0].get("tray_path", "").strip()
+        if not tray: continue
+
+        # ファイル名と内容
+        fname = f"【先行Apps承認確認】{ev['line_name']}_{ev['title']}.txt"
+        body = (
+            f"イベントID: {eid}\n"
+            f"カテゴリ: {ev['category']}\n"
+            f"ライン名: {ev['line_name']}\n"
+            f"件名: {ev['title']}\n"
+            f"開始日時: {ev['start_dt']}\n"
+            f"終了日時: {ev['end_dt']}\n"
+            f"緊急度: {ev['urgency']}\n"
+            f"単位: {ev['unit']}\n"
+            f"備考: {ev.get('memo','')}\n"
+        )
+
+        # フォルダへ書き出し
+        path = Path(tray) / fname
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(body)
+
+    log_action(current_user(), "deposit_tray", f"eid={eid}")
+    return jsonify(status="deposited")
+
+# ── ユーザー編集画面＆API ─────────────────────────────────────────
+@app.get("/users")
+def page_users():
+    if not current_user():
+        return redirect("/login.html")
+    return send_from_directory(app.static_folder, "users.html")
+
+@app.get("/api/users/all")
+def api_users_all():
+    df = ensure_id(read_csv(CSV_USERS))
+    for c in ("last_name","first_name","email","dept_code"):
+        if c not in df.columns:
+            df[c] = ""
+    return df.to_dict(orient="records")
+
+@app.put("/api/users/<int:uid>")
+def api_user_update(uid: int):
+    usr = current_user()
+    if not usr:
+        abort(401, "login required")
+    if usr["id"] != uid:
+        abort(403, "forbidden")
+
+    d    = request.get_json(force=True)
+    ln   = d.get("last_name","").strip()
+    fn   = d.get("first_name","").strip()
+    mail = d.get("email","").strip().lower()
+    dept = d.get("dept_code","").strip().upper()
+
+    # バリデーション
+    if not (ln and fn and mail and dept):
+        abort(400, "all fields required")
+    if not re.fullmatch(r"[^@]+@[^@]+\.[^@]+", mail):
+        abort(400, "invalid email")
+    if not re.fullmatch(r"[A-Za-z0-9]{5}", dept):
+        abort(400, "dept_code must be 5 alnum")
+
+    df     = ensure_id(read_csv(CSV_USERS))
+    others = df[df["id"].astype(int) != uid]
+    if mail in others["email"].str.strip().str.lower().values:
+        abort(400, "email duplicated")
+
+    df.loc[df["id"].astype(int) == uid, "last_name"]  = ln
+    df.loc[df["id"].astype(int) == uid, "first_name"] = fn
+    df.loc[df["id"].astype(int) == uid, "email"]      = mail
+    df.loc[df["id"].astype(int) == uid, "dept_code"]  = dept
+
+    write_csv(df, CSV_USERS)
+    log_action(usr, "user_update", f"id={uid}")
+    return jsonify(status="updated")
 
 # ── Global Error Handler ───────────────────────────────────────
 @app.errorhandler(Exception)
