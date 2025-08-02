@@ -1,14 +1,27 @@
 /* auth.js – login / register / logout with dept_code */
-
 const api = async (url, method = "GET", body) => {
     const r = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: body ? JSON.stringify(body) : undefined
     });
-    const t = await r.text();
-    if (!r.ok) throw t || `HTTP ${r.status}`;
-    try { return JSON.parse(t); } catch { return t; }
+    const text = await r.text();
+    let data = null;
+    try {
+        data = JSON.parse(text);
+    } catch {
+        // 非JSONの場合は data=null のまま
+    }
+
+    if (!r.ok) {
+        // エラーメッセージの優先順：data.error → 全文 → HTTPステータス
+        const msg = data && data.error
+            ? data.error
+            : text || `HTTP ${r.status}`;
+        throw msg;
+    }
+    // 成功時は JSON オブジェクト or 生テキストを返す
+    return data !== null ? data : text;
 };
 const $ = id => document.getElementById(id);
 
