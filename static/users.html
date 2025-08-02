@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>先行生産視える化アプリ - ユーザー編集</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* テーブル行の高さをテキストサイズに合わせる */
+        #user-table tr {
+            height: auto;
+        }
+
+        /* 戻るボタンを右端に */
+        #btn-back {
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header id="app-header" style="display:flex; align-items:center; padding:6px 12px;">
+        <span id="greeting" style="font-size:18px; font-weight:600;">ユーザー編集</span>
+        <button id="btn-back" type="button" class="action" onclick="location.href='/calendar'">戻る</button>
+    </header>
+    <div style="padding:16px">
+        <table id="user-table" style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">ID</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">姓</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">名</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 20%;">メール</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">部署</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 50%;">電子トレイ</th>
+                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">選択</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+    <script src="auth.js"></script>
+    <script src="users.js"></script>
+    <script src="logger.js"></script>
+</body>
+
+</html>
