@@ -1,0 +1,27 @@
+project_root/
+├─ .env
+├─ .gitignore
+├─ requirements.txt
+├─ app.py
+├─ utils/
+│   └─ csv_store.py
+├─ data/
+│   ├─ users.csv
+│   ├─ events.csv
+│   ├─ contacts.csv
+│   ├─ urgencies.csv
+│   └─ units.csv
+├─ logs/
+│   ├─ user_actions.csv
+│   └─ server_errors.csv
+├─ static/
+│   ├─ index.html
+│   ├─ login.html
+│   ├─ users.html
+│   ├─ styles.css
+│   ├─ login.css
+│   ├─ main.js
+│   ├─ users.js
+│   ├─ auth.js
+│   └─ logger.js
+└─ tests/
