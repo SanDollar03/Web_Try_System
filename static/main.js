@@ -13,6 +13,15 @@
     /* ---------- API helper ---------- */
     const api = window.tryApi;
 
+    /* ── 追加：ヘッダー操作 ── */
+    document.getElementById("btn-logout").onclick = async () => {
+        await api("/api/logout", "POST").catch(() => { });
+        location.href = "/login.html";
+    };
+    document.getElementById("btn-users").onclick = () => {
+        location.href = "/users";
+    };
+
     /* ---------- マスタ取得 ---------- */
     const [urgencies, units, contacts, users] = await Promise.all([
         api("/api/urgencies").catch(() => []),
@@ -212,6 +221,20 @@
             await calendar.refetchEvents();
             resetForm();
         } catch (err) { alert(err); }
+    };
+
+    // ── 電子トレイ投函ボタン ─────────────────────────────
+    document.getElementById("btn-email").onclick = async () => {
+        if (!editing || editingId == null) {
+            alert("まずイベントを選択してください。");
+            return;
+        }
+        try {
+            await api(`/api/events/${editingId}/deposit_tray`, "POST");
+            alert("電子トレイへ投函しました。");
+        } catch (err) {
+            alert("投函に失敗しました: " + err);
+        }
     };
 
     /* ---------- reset ---------- */
