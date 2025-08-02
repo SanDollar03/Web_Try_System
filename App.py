@@ -318,9 +318,18 @@ def api_user_update(uid: int):
     if not usr:
         abort(401, "login required")
     if usr["id"] != uid:
-        abort(403, "forbidden")
+        abort(403, "ログインユーザーが一致しないので保存できません")
 
-    d    = request.get_json(force=True)
+    d = request.get_json(force=True)
+
+    # tray_path 単独更新リクエストの処理
+    if set(d.keys()) == {"tray_path"}:
+        df = ensure_id(read_csv(CSV_USERS))
+        df = ensure_columns(df, ["tray_path"])
+        df.loc[df["id"].astype(int) == uid, "tray_path"] = d["tray_path"]
+        write_csv(df, CSV_USERS)
+        log_action(usr, "user_update_tray", f"id={uid}")
+        return jsonify(status="tray_path updated")
     ln   = d.get("last_name","").strip()
     fn   = d.get("first_name","").strip()
     mail = d.get("email","").strip().lower()
