@@ -3,20 +3,19 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Try System | カレンダー</title>
-
-    <!-- FullCalendar -->
+    <title>先行生産視える化アプリ</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <!-- ── ヘッダー ───────────────────────── -->
     <header id="app-header">
-        <span id="greeting">ようこそ！</span>
-        <button id="btn-logout" type="button" class="action" style="float:right">ログアウト</button>
+        <span id="greeting">先行生産視える化アプリへようこそ！</span>
+        <!-- margin-left:auto をログアウトに付けて右寄せ -->
+        <button id="btn-logout" type="button" class="action" style="margin-left:auto">ログアウト</button>
+        <!-- ログアウトの右隣に配置 -->
+        <button id="btn-users" type="button" class="action">ユーザー編集</button>
     </header>
 
     <!-- ── 本体 ───────────────────────────── -->
@@ -93,6 +92,7 @@
                 <div class="row buttons">
                     <button type="submit" class="action">登録</button>
                     <button type="button" id="btn-cancel" class="action">イベントのキャンセル</button>
+                    <button type="button" id="btn-email" class="action">電子トレイに投函</button>
                 </div>
             </form>
 
