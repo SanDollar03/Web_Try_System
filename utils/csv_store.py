@@ -1,5 +1,10 @@
 from pathlib import Path
 import pandas as pd
+from filelock import FileLock
+
+def _lock(path: Path) -> FileLock:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return FileLock(str(path) + ".lock", timeout=10)
 
 def read_csv(path: Path, *, columns: list[str] | None = None) -> pd.DataFrame:
     """
@@ -9,13 +14,18 @@ def read_csv(path: Path, *, columns: list[str] | None = None) -> pd.DataFrame:
     if not path.exists() or path.stat().st_size == 0:
         return pd.DataFrame(columns=columns or [])
     try:
+        # 書込は原子的置換なので、読込は通常でOK（部分書込は発生しない）
         return pd.read_csv(path, dtype=str, keep_default_na=False)
     except pd.errors.EmptyDataError:
         return pd.DataFrame(columns=columns or [])
 
 def write_csv(df: pd.DataFrame, path: Path):
+    """filelock で排他し、.tmp に書いてから原子的に置換"""
     path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(path, index=False, encoding="utf-8-sig")
+    with _lock(path):
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        df.to_csv(tmp, index=False, encoding="utf-8-sig")
+        tmp.replace(path)
 
 def ensure_columns(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     """指定列が無ければ追加して返す（中身は空文字列）"""
