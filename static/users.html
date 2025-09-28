@@ -2,16 +2,81 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>先行生産視える化アプリ - ユーザー編集</title>
+    <meta charset="UTF-8">
+    <title>ユーザー編集</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* テーブル行の高さをテキストサイズに合わせる */
-        #user-table tr {
-            height: auto;
+        /* 表スタイル（見やすさ用の最小限） */
+        #user-table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
         }
 
-        /* 戻るボタンを右端に */
+        #user-table th,
+        #user-table td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            vertical-align: middle;
+        }
+
+        #user-table thead th {
+            background: #f5f5f5;
+        }
+
+        /* 幅調整：ID小／部署・メール小さめ／トレイ広め／保存は極小 */
+        th.col-id,
+        td.col-id {
+            width: 60px;
+            text-align: right;
+        }
+
+        th.col-dept,
+        td.col-dept {
+            width: 110px;
+        }
+
+        th.col-email,
+        td.col-email {
+            width: 180px;
+        }
+
+        th.col-tray,
+        td.col-tray {
+            width: auto;
+        }
+
+        th.col-save,
+        td.col-save {
+            width: 90px;
+            text-align: center;
+        }
+
+        /* inputはセル幅に収める */
+        .cell-input {
+            width: 100%;
+            box-sizing: border-box;
+            height: 30px;
+        }
+
+        .cell-input[readonly] {
+            background: #f1f1f1;
+            color: #555;
+        }
+
+        /* 本人以外の行はうっすら */
+        tr.readonly {
+            opacity: .75;
+        }
+
+        /* ページ上部 */
+        #page-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
         #btn-back {
             margin-left: auto;
         }
@@ -19,27 +84,32 @@
 </head>
 
 <body>
-    <header id="app-header" style="display:flex; align-items:center; padding:6px 12px;">
-        <span id="greeting" style="font-size:18px; font-weight:600;">ユーザー編集</span>
-        <button id="btn-back" type="button" class="action" onclick="location.href='/calendar'">戻る</button>
-    </header>
-    <div style="padding:16px">
-        <table id="user-table" style="width:100%; border-collapse:collapse;">
-            <thead>
-                <tr>
-                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">ID</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">姓</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">名</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 20%;">メール</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">部署</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 50%;">電子トレイ</th>
-                    <th style="border:1px solid #ccc; padding:8px; width: 5%;">保存</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
+    <div id="page-head">
+        <h2 style="margin:0">ユーザー編集</h2>
+        <button id="btn-back" class="action">戻る</button>
     </div>
+
+    <p id="note" style="margin:6px 0 14px;color:#555;font-size:12px">
+        ※表示は全ユーザー。<b>ログインユーザー本人の行のみ編集可能</b>です。
+    </p>
+
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th class="col-id">ID</th>
+                <th>姓</th>
+                <th>名</th>
+                <th class="col-email">メール</th>
+                <th class="col-dept">部署コード</th>
+                <th class="col-tray">電子トレイ</th>
+                <th class="col-save">保存</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- users.js が挿入 -->
+        </tbody>
+    </table>
+
     <script src="auth.js"></script>
     <script src="users.js"></script>
     <script src="logger.js"></script>

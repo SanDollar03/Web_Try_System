@@ -1,27 +1,14 @@
-/* auth.js – login / register / logout with dept_code */
+/* auth.js – login / register / logout with dept_code + guest */
+
 const api = async (url, method = "GET", body) => {
     const r = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: body ? JSON.stringify(body) : undefined
     });
-    const text = await r.text();
-    let data = null;
-    try {
-        data = JSON.parse(text);
-    } catch {
-        // 非JSONの場合は data=null のまま
-    }
-
-    if (!r.ok) {
-        // エラーメッセージの優先順：data.error → 全文 → HTTPステータス
-        const msg = data && data.error
-            ? data.error
-            : text || `HTTP ${r.status}`;
-        throw msg;
-    }
-    // 成功時は JSON オブジェクト or 生テキストを返す
-    return data !== null ? data : text;
+    const t = await r.text();
+    if (!r.ok) throw t || `HTTP ${r.status}`;
+    try { return JSON.parse(t); } catch { return t; }
 };
 const $ = id => document.getElementById(id);
 
@@ -40,12 +27,15 @@ if (location.pathname === "/" || location.pathname.endsWith("login.html")) {
     /* ---- login ---- */
     $("login-form").onsubmit = async e => {
         e.preventDefault(); $("msg").textContent = "";
-        const email = $("login-email").value.trim().toLowerCase();
+        let email = $("login-email").value.trim().toLowerCase();
+
         try {
+            // ★ 'g' ならゲストログイン
             const me = await api("/api/login", "POST", { email });
             sessionStorage.setItem("justLoggedIn", "1");
             sessionStorage.setItem("currentUserFull", `${me.last}${me.first}`);
             sessionStorage.setItem("currentUserDept", me.dept_code || "");
+            sessionStorage.setItem("isGuest", me.role === "guest" ? "1" : "0");
             location.href = "/calendar";
         } catch (err) {
             $("msg").textContent = err.includes("user not found") ? "未登録のメールアドレスです。" : err;
@@ -70,6 +60,7 @@ if (location.pathname === "/" || location.pathname.endsWith("login.html")) {
             sessionStorage.setItem("justLoggedIn", "1");
             sessionStorage.setItem("currentUserFull", `${me.last}${me.first}`);
             sessionStorage.setItem("currentUserDept", me.dept_code || "");
+            sessionStorage.setItem("isGuest", me.role === "guest" ? "1" : "0");
             location.href = "/calendar";
         } catch (err) {
             $("msg").textContent = err.includes("email duplicated") ? "このメールは既に登録済みです。" : err;
@@ -82,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!location.pathname.startsWith("/calendar")) return;
 
     if (sessionStorage.getItem("justLoggedIn")) {
-        sessionStorage.removeItem("justLoggedIn");   // keep session
+        sessionStorage.removeItem("justLoggedIn");
     } else {
         await api("/api/logout", "POST").catch(() => { });
         location.href = "/login.html"; return;
@@ -91,9 +82,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const me = await api("/api/me").catch(() => null);
     if (!me || !me.last) { location.href = "/login.html"; return; }
 
-    $("greeting").textContent = `ようこそ！${me.last} ${me.first} さん`;
+    const guest = me.role === "guest";
+    $("greeting").textContent = guest
+        ? `ようこそ！${me.last} ${me.first} さん（閲覧専用）`
+        : `ようこそ！${me.last} ${me.first} さん`;
+
     sessionStorage.setItem("currentUserFull", `${me.last}${me.first}`);
     sessionStorage.setItem("currentUserDept", me.dept_code || "");
+    sessionStorage.setItem("isGuest", guest ? "1" : "0");
 
     $("btn-logout").onclick = async () => {
         await api("/api/logout", "POST").catch(() => { });
@@ -101,4 +97,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 });
 
-window.tryApi = api;        // main.js で再利用
+window.tryApi = api;
